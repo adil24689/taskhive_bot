@@ -32,6 +32,28 @@ async def start_cmd(message: types.Message):
 async def myid_cmd(message: types.Message):
     await message.answer(f"🆔 Your Telegram ID: <code>{message.from_user.id}</code>", parse_mode="HTML")
 
+import logging
+
+bot_user = None
+
+@dp.message_handler(commands=['refer'])
+async def refer_cmd(message: types.Message):
+    global bot_user
+    if not bot_user:
+        bot_user = await bot.get_me()
+    username = bot_user.username
+    logging.info(f"Bot username: {username}")
+    if not username:
+        await message.answer("⚠️ বটের username পাওয়া যাচ্ছে না। অনুগ্রহ করে BotFather এ username সেট করুন।")
+        return
+
+    user_id = message.from_user.id
+    referral_link = f"https://t.me/{username}?start={user_id}"
+    await message.answer(
+        f"🔗 তোমার রেফারেল লিঙ্ক:\n{referral_link}\n\n"
+        "এই লিঙ্ক দিয়ে বন্ধুদের আমন্ত্রণ করো এবং পয়েন্ট জেতো!"
+    )
+
 
 # ✅ /myprofile – Show user profile
 @dp.message_handler(commands=['myprofile'])
